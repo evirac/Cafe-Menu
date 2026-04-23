@@ -188,7 +188,8 @@
     from { opacity:0; transform:translateY(12px); }
     to { opacity:1; transform:translateY(0); }
   }
-  .menu-section { animation:fadeUp 0.45s ease both; }
+  .menu-section { opacity:0; transform:translateY(12px); transition:opacity 0.45s ease, transform 0.45s ease; }
+  .menu-section.visible { opacity:1; transform:translateY(0); }
 
   @media (min-width:480px) { .hero-title { font-size:66px; } }
   @media (min-width:768px) {
@@ -762,6 +763,14 @@
 
   window.addEventListener('scroll', updateActive, {passive: true});
   updateActive();
+
+  // Fade-in sections only when they enter the viewport (fixes scroll stutter on mobile)
+  const fadeObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); fadeObs.unobserve(e.target); }
+    });
+  }, {rootMargin: '0px 0px -5% 0px'});
+  sections.forEach(s => fadeObs.observe(s));
 
 </script>
 
